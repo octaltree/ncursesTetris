@@ -1,4 +1,4 @@
-#include"localmino.h"
+#include"mino.h"
 
 /*
 void mino::getrestblock(coordinate out[]){

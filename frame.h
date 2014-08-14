@@ -1,6 +1,6 @@
 //描画とあたり判定などゲームの制御
 
-//#include"mino.h"
+#include"mino.h"
 #pragma once
 
 class tetris{

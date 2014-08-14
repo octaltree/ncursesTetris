@@ -1,5 +1,5 @@
 #include<iostream>
-#include"mainframe.h"
+#include"frame.h"
   //#include<iomanip>
   //#include<cstdlib>
   //#include<cstdio>

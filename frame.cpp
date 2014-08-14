@@ -1,4 +1,4 @@
-#include"mainframe.h"
+#include"frame.h"
 #include<ncurses.h>
 #include<string>
 #include<random>
