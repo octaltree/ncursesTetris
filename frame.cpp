@@ -34,13 +34,15 @@ int tetris::instruct(){
 
   attrset(COLOR_PAIR(0));
   mvaddstr(3, 5, "全消しでクリア");
-  mvaddstr(7, 0,"   k  :ブロックを回転");
-  mvaddstr(9, 0,"   h  :ブロックを左に移動");
-  mvaddstr(12, 0,"   l  :ブロックを右に移動");
-  mvaddstr(15, 0,"   j  :ブロックを下に移動");
-  mvaddstr(18, 0,"Space :ブロックをストック/リリース");
-  mvaddstr(21, 0,"   f  :ブロックを落下");
-  mvaddstr(24, 0,"q/Esc :ゲームを終了");
+  mvaddstr(7, 0, "   k  :ブロックを回転");
+  mvaddstr(9, 0, "   h  :ブロックを左に移動");
+  mvaddstr(12, 0, "   l  :ブロックを右に移動");
+  mvaddstr(15, 0, "   j  :ブロックを下に移動");
+  mvaddstr(18, 0, "Space :ブロックをストック/リリース");
+  mvaddstr(21, 0, "   f  :ブロックを落下");
+  mvaddstr(24, 0, "q/Esc :ゲームを終了");
+  mvaddstr(28, 0, "ゲームが長引くとframe数のカウントがoverflow");
+  mvaddstr(29, 0, "(ゲームの進行に影響はない)");
   mvaddstr(35, 1, "--- put any key ---");
 
   move(0, 0);
