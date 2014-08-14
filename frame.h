@@ -10,7 +10,7 @@ class tetris{
     void start();
     int instruct();
     int game();// -1:強制終了, 0:ゲームクリア, 1:ゲームオーバー
-      //void inputkey(char);
+      //int inputkey(char);
     bool CLEAR();
     bool GAMEOVER();
 

@@ -2,6 +2,9 @@
 #include<ncurses.h>
 #include<string>
 #include<random>
+#include<chrono>
+
+using namespace std::chrono;
 
 void tetris::start(){
   erase();
@@ -66,16 +69,15 @@ void tetris::Main(){
   int flag = -1;
   bool replay = false;
 
-  //if( !end )
-  //int flag = game();// -1, 0, 1で返す
+  if( !end )
+    flag = game();// -1, 0, 1で返す
 
-  //test
-  flag = 0;
-  //test
+  if( flag == -1 ) end = true;
+
 
   if( flag == 1 )
     replay = CLEAR();
-  else if( !flag )
+  else if( flag == 0 )
     replay = GAMEOVER();
 
   endwin();
@@ -83,9 +85,11 @@ void tetris::Main(){
   if( replay ) Main();
 }
 
-int game(){
+/* *
+int tetris::game(){
   erase();
-  timeout(100);// 100ミリ秒でgetchの入力待ちを終わらせる
+  timeout(0.001);
+  //timeout(100);// 100ミリ秒でgetchの入力待ちを終わらせる
   //最遅10fps
 
 
@@ -104,8 +108,41 @@ int game(){
     move(0, 0);
     refresh();
   }
-
+  return 0;
 }
+
+/*/
+int tetris::game(){
+  erase();
+  timeout(10);//10ミリ秒
+
+  unsigned long long int frame = 0;
+  int in;
+  unsigned long long int catchkey = 0, notkey = 0;
+  unsigned long long int debug = 3;
+  while(1){
+    system_clock::time_point begin = system_clock::now();
+    milliseconds ms(17);
+
+    in = getch();//timeoutした場合-1を返す
+    if( in == (int)'q' || in == 27 ) return -1;
+    //                 || ESCが押されたとき
+
+    //do something here
+    if( in != -1 ) mvprintw(1, 1, "catchkey : %d", ++catchkey);
+    else  mvprintw(2, 1, "notkey : %d", ++notkey);
+
+    mvprintw(0, 1, "frame : %d", ++frame);
+    move(0, 0);
+    refresh();
+    if( time_point_cast<milliseconds>(system_clock::now()) - time_point_cast<milliseconds>(begin) > ms )
+      mvaddstr(debug++, 1, "out");
+    for(unsigned long long int weight = 0; weight < (1 << 30); weight++)
+      if( time_point_cast<milliseconds>(system_clock::now()) - time_point_cast<milliseconds>(begin) > ms )
+        break;
+  }
+}
+/* */
 
 /*
 void tetris::inputkey(char in, mino block){
@@ -187,7 +224,7 @@ bool tetris::GAMEOVER(){
   erase();
   int xmax, ymax;
   getmaxyx(stdscr,ymax,xmax);
-  mvaddstr(10, 1,"G A M E O V E R");
+  mvaddstr(10, 5,"G A M E O V E R");
 
   //string esc;
   //esc = "one more time? (y/n)";
