@@ -8,11 +8,16 @@ using namespace std::chrono;
 
 void tetris::Main(){
   bool end = 0;
-  setlocale(LC_ALL,"");
+  setlocale(LC_ALL,"");//全角文字に対応するおまじない
   initscr();
   noecho();//keyのinputを画面に表示しない
   cbreak();//Enterなしでinput
+
   start_color();
+  for(int f = 0; f < 8; f++)
+    for(int b = 0; b < 8; b++)
+      init_pair(f*10+b, f, b);
+ 
 
   start();
   if( instruct() == -1 ) end = true;
@@ -27,6 +32,11 @@ void tetris::Main(){
   if( flag == -1 ) end = true;
 
 
+  //debug
+  flag = 0;
+  //debug
+
+
   if( flag == 1 )
     replay = CLEAR();
   else if( flag == 0 )
@@ -37,40 +47,18 @@ void tetris::Main(){
   if( replay ) Main();
 }
 
-/* *
 int tetris::gameframe(){
+  for(int l = 0; l < 20; l++)
+    for(int r = 0; r < 10; r++)
+      nmino[l][r] = 0;
+
   erase();
-  timeout(0.001);
-  //timeout(100);// 100ミリ秒でgetchの入力待ちを終わらせる
-  //最遅10fps
-
-
-  long long int frame = 0;//overflow
-  int in;
-  while(1){
-    in = getch();//timeoutした場合-1を返す
-    if( in == (int)'q' || in == 27 ) return -1;
-    //                 || ESCが押されたとき
-
-
-    // do something here
-
-
-    mvprintw(0, 1, "frame : %d", frame++);
-    move(0, 0);
-    refresh();
-  }
-  return 0;
-}
-
-/*/
-int tetris::gameframe(){
-  erase();
-  for(int i = 0; i < 10; i++) nmino[20][i] = 0;
   timeout(10);//10ミリ秒
 
   unsigned long long int frame = 0;
   int in;
+  bool nino = false;
+  mino block;
 
   while(1){
     system_clock::time_point begin = system_clock::now();
@@ -80,8 +68,25 @@ int tetris::gameframe(){
     if( in == (int)'q' || in == 27 ) return -1;
     //                 || ESCが押されたとき
 
-    //do something here
-    if( deleteline() > 0 && judgeclear()) return 1;
+    //ゲーム処理のメイン////////////////////
+    if( !nino){ 
+      block.center.x = 0;
+      block.center.y = 0;
+      block.rotate = 0;
+      block.type = getrandomtype();
+    }//初期化
+    inputkey(in, block);
+
+    if( !nino) 
+    //inputkey(in);
+    int dl = deleteline();
+    if( dl > 0 && judgeclear()) return 1;
+
+    //ゲーム処理のメイン////////////////////
+    //初期化して
+    //動かして
+    //終了条件照らしあわせて
+    //描画する
 
     mvprintw(0, 1, "frame : %d", ++frame);
     move(0, 0);
@@ -92,28 +97,34 @@ int tetris::gameframe(){
           break;
   }
 }
-/* */
 
-
-/*
-void tetris::inputkey(char in, mino block){
+int tetris::inputkey(char in, mino block){
   switch(in){
     case (int)'h': 
-      block.x--;
+      block.center.x--;
     break;
     case (int)'j': 
-      block.y++; 
+      block.center.y++; 
     break;
     case (int)'l': 
-      block.x++; 
+      block.center.x++; 
     break;
     case (int)'k': 
-      block.rotation++; 
+      block.rotate++; 
     break;
-    defalt: break;
+    case (int)'f':
+      //落下操作
+    break;
+    case 32:
+      //spaceが押された時ホールド/リリース
+    break;
+    defalt: 
+
+    break;
   }
+
+  return 0;
 }
-*/
 
 void tetris::showboard(){
   attrset(COLOR_PAIR(0));
@@ -175,11 +186,13 @@ bool tetris::GAMEOVER(){
   erase();
   int xmax, ymax;
   getmaxyx(stdscr,ymax,xmax);
+  attrset(COLOR_PAIR(10));
   mvaddstr(10, 5,"G A M E O V E R");
 
   //string esc;
   //esc = "one more time? (y/n)";
   //mvprintw(ymax, (xmax-esc.length()-4)/2, "%s", esc.c_str());
+  attrset(COLOR_PAIR(0));
   mvaddstr(35, 2, "one more time? (y/n)");
   move(0, 0);
   refresh();
@@ -283,4 +296,11 @@ bool tetris::judgeclear(){
   }
   
   return clear;
+}
+
+int tetris::getrandomtype(){
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_int_distribution<int> minotype(1, 7);
+  return minotype(mt);
 }
