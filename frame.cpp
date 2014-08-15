@@ -81,14 +81,15 @@ int tetris::gameframe(){
     //                 || ESCが押されたとき
 
     //do something here
+    if( deleteline() > 0 && judgeclear()) return 1;
 
     mvprintw(0, 1, "frame : %d", ++frame);
     move(0, 0);
     refresh();
 
     for(unsigned long long int weight = 0; weight < (1 << 30); weight++)
-      if( time_point_cast<milliseconds>(system_clock::now()) - time_point_cast<milliseconds>(begin) > ms )
-        break;
+        if( time_point_cast<milliseconds>(system_clock::now()) - time_point_cast<milliseconds>(begin) > ms )
+          break;
   }
 }
 /* */
@@ -101,7 +102,7 @@ void tetris::inputkey(char in, mino block){
       block.x--;
     break;
     case (int)'j': 
-      block.y--; 
+      block.y++; 
     break;
     case (int)'l': 
       block.x++; 
@@ -242,57 +243,11 @@ int tetris::instruct(){
     return 0;
 }
 
-/*
-int deleteline(){
-  int j;
-  for(int i = 19; i >= 0; i--){
-    if( nmino[i][0] && nmino[i][1] && nmino[i][2] && nmino[i][3] && nmino[i][4] && nmino[i][5] && nmino[i][6] && nmino[i][7] && nmino[i][8] && nmino[i][9] );{
-      for( j = i; j < 21; j++){
-        if( !(nmino[j][0] && nmino[j][1] && nmino[j][2] && nmino[j][3] && nmino[j][4] && nmino[j][5] && nmino[j][6] && nmino[j][7] && nmino[j][8] && nmino[j][9]) );{
-          break;
-        }
-      }
-    }
-  }
-}
-*/
-
-/*
 int tetris::deleteline(){
-  for(int i = 20; i > 0; i--){
+  int dlcount = 0;//消える段数
+  for(int i = 19; i >= 0; i--){
     if( nmino[i][0] && nmino[i][1] && nmino[i][2] && nmino[i][3] && nmino[i][4] && nmino[i][5] && nmino[i][6] && nmino[i][7] && nmino[i][8] && nmino[i][9] ){
-      for(int j = 0; j < 10; j++) nmino[i][j] = -1;//消すとこ とりま−1入れとく
-    }
-  }
-    //for( mvto = i; mvto >= 0; mvto--){
-    //  if( !(nmino[j][0] && nmino[j][1] && nmino[j][2] && nmino[j][3] && nmino[j][4] && nmino[j][5] && nmino[j][6] && nmino[j][7] && nmino[j][8] && nmino[j][9]) ){
-    //    break;
-    //  }
-    //}
-
-  int mvto;
-  int dlcount = 0;//消した行数
-  for(int i = 20; i > 0; i--){
-    if( nmino[i][0] == -1){
       dlcount++;
-      for( mvto = i; mvto >= 0; mvto--)
-        if( nmino[mvto][0] != -1 )
-          break;
-      mvto += dlcount;
-      if( mvto >= 0 )
-        for(int l = 0; l < 10; l++) 
-          nmino[i][l] = nmino[mvto][l];
-      else
-        for(int l = 0; l < 10; l++)
-          nmino[i][l] = 0;
-    }
-  }
-}
-*/
-
-int tetris::deleteline(){
-  for(int i = 19; i >= 0; i--){
-    if( nmino[i][0] && nmino[i][1] && nmino[i][2] && nmino[i][3] && nmino[i][4] && nmino[i][5] && nmino[i][6] && nmino[i][7] && nmino[i][8] && nmino[i][9] ){
       for(int j = 0; j < 10; j++) nmino[i][j] = -1;
     }
   }//消すところに とりま−1を入れとく
@@ -316,6 +271,16 @@ int tetris::deleteline(){
     for(int n = 0; n < 10; n++)
       nmino[m][n] = tmp[m][n];
 
-  return 0;//余裕があれば消した段数返してもいいかな
+  return dlcount;
 }
 
+bool tetris::judgeclear(){
+  bool clear = true;
+  for(int l = 0; l  < 20; l++){
+    for(int r = 0; r < 10; r++){
+      if( nmino[l][r] != 0 ) clear *= 0;
+    }
+  }
+  
+  return clear;
+}

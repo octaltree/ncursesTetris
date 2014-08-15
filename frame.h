@@ -12,10 +12,11 @@ class tetris{
     int gameframe();// -1:強制終了, 0:ゲームクリア, 1:ゲームオーバー
       //int inputkey(char);
       //int game();
+      int deleteline();//消した本数を返す
+      bool judgeclear();
     bool CLEAR();
     bool GAMEOVER();
 
-    int deleteline();
     void showboard();
 
 
