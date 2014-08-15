@@ -5,16 +5,17 @@
 
 class tetris{
   private:
-    int nmino[20][10];
+    int nmino[21][10];
 
     void start();
     int instruct();
-    int game();// -1:強制終了, 0:ゲームクリア, 1:ゲームオーバー
+    int gameframe();// -1:強制終了, 0:ゲームクリア, 1:ゲームオーバー
       //int inputkey(char);
+      //int game();
     bool CLEAR();
     bool GAMEOVER();
 
-    //bool deleteline(status s);
+    int deleteline();
     void showboard();
 
 
