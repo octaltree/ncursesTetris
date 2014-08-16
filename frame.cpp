@@ -89,9 +89,15 @@ int tetris::gameframe(){
     move(0, 0);
     refresh();
 
-    for(unsigned long long int weight = 0; weight < (1 << 30); weight++)
+    
+    for(unsigned long long int weight = 0; weight < (1 << 30); weight++){
+      for(unsigned long long int weight2 = 0; weight < (1 << 30); weight2++){
         if( time_point_cast<milliseconds>(system_clock::now()) - time_point_cast<milliseconds>(begin) > ms )
           break;
+      }
+      if( time_point_cast<milliseconds>(system_clock::now()) - time_point_cast<milliseconds>(begin) > ms )
+        break;
+    }
   }
 }
 
@@ -223,13 +229,32 @@ bool tetris::GAMEOVER(){
 
 void tetris::start(){
   erase();
+
+  for(int l = 4; l < 8; l++) nmino[l][9] = 6;
+  for(int j = 17; j < 20; j++) nmino[j][0] = 7; 
+  nmino[19][1] = 7; nmino[18][1] = 1; nmino[18][2] = 1;
+  nmino[19][2] = 1; nmino[19][3] = 1; nmino[18][4] = 4;
+  for(int b = 4; b < 8; b++) nmino[19][b] = 4;
+  for(int i = 17; i < 20; i++) nmino[i][8] = 5;
+  nmino[18][7] = 5; nmino[18][6] = 1; nmino[17][6] = 1;
+  nmino[17][7] = 1; nmino[16][7] = 1; nmino[16][6] = 4;
+  for(int x = 16; x < 19; x++) nmino[x][5] = 4;
+  nmino[17][1] = 2; nmino[16][1] = 2; nmino[16][0] = 2;
+  nmino[15][0] = 2; nmino[18][3] = 5;
+  for(int z = 2; z <= 4; z++) nmino[17][z] = 5;
+  nmino[16][2] = 3; nmino[16][3] = 3; nmino[15][2] = 3;
+  nmino[15][3] = 3; nmino[16][4] = 7;
+  for(int c = 4; c <= 6; c++) nmino[15][c] = 7;
+  nmino[15][8] = 2; nmino[16][8] = 2; nmino[15][7] = 2;
+  nmino[14][7] = 2;
+
   showboard();
   attrset(COLOR_PAIR(0));
   mvaddstr(15, 3, "T");
   mvaddstr(15, 6, "E");
   mvaddstr(15, 9, "T");
   mvaddstr(15, 12, "R");
-  mvaddstr(15, 15, "i");
+  //mvaddstr(15, 15, "i");
   mvaddstr(15, 18, "S");
   attrset(COLOR_PAIR(0));
   mvaddstr(35, 1, "--- put any key ---");
@@ -255,8 +280,6 @@ int tetris::instruct(){
   mvaddstr(18, 0, "Space :ブロックをストック/リリース");
   mvaddstr(21, 0, "   f  :ブロックを落下");
   mvaddstr(24, 0, "q/Esc :ゲームを終了");
-  mvaddstr(28, 0, "ゲームが長引くとframe数のカウントがoverflow");
-  mvaddstr(29, 0, "(ゲームの進行に影響はない)");
   mvaddstr(35, 1, "--- put any key ---");
 
   move(0, 0);
