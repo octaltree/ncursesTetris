@@ -18,6 +18,8 @@ class tetris{
     bool CLEAR();
     bool GAMEOVER();
 
+    void clearnmino();
+
     void showboard();
 
 

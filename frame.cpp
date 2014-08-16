@@ -19,6 +19,7 @@ void tetris::Main(){
       init_pair(f*10+b, f, b);
  
 
+  clearnmino();
   start();
   if( instruct() == -1 ) end = true;
 
@@ -48,10 +49,7 @@ void tetris::Main(){
 }
 
 int tetris::gameframe(){
-  for(int l = 0; l < 20; l++)
-    for(int r = 0; r < 10; r++)
-      nmino[l][r] = 0;
-
+  clearnmino();
   erase();
   timeout(10);//10ミリ秒
 
@@ -75,10 +73,9 @@ int tetris::gameframe(){
       block.rotate = 0;
       block.type = getrandomtype();
     }//初期化
+
     inputkey(in, block);
 
-    if( !nino) 
-    //inputkey(in);
     int dl = deleteline();
     if( dl > 0 && judgeclear()) return 1;
 
@@ -134,6 +131,22 @@ void tetris::showboard(){
   }
   for(int j = 5; j < 17; j++)
     mvaddstr(30, j, "-");
+
+  for(int l = 0; l < 20; l++){
+    for(int r = 0; r < 10; r++){
+      switch(nmino[l][r]){
+        case 0: attrset(COLOR_PAIR(0)); break;
+        case 1: attrset(COLOR_PAIR(11)); break;
+        case 2: attrset(COLOR_PAIR(22)); break;
+        case 3: attrset(COLOR_PAIR(33)); break;
+        case 4: attrset(COLOR_PAIR(44)); break;
+        case 5: attrset(COLOR_PAIR(55)); break;
+        case 6: attrset(COLOR_PAIR(66)); break;
+        case 7: attrset(COLOR_PAIR(77)); break;
+      }
+      mvaddstr(10+l, 6+r, " ");
+    }
+  }
 
   move(0, 0);
   refresh();
@@ -210,6 +223,7 @@ bool tetris::GAMEOVER(){
 
 void tetris::start(){
   erase();
+  showboard();
   attrset(COLOR_PAIR(0));
   mvaddstr(15, 3, "T");
   mvaddstr(15, 6, "E");
@@ -220,7 +234,6 @@ void tetris::start(){
   attrset(COLOR_PAIR(0));
   mvaddstr(35, 1, "--- put any key ---");
 
-  showboard();
 
   move(0, 0);
   refresh();
@@ -303,4 +316,10 @@ int tetris::getrandomtype(){
   std::mt19937 mt(rd());
   std::uniform_int_distribution<int> minotype(1, 7);
   return minotype(mt);
+}
+
+void tetris::clearnmino(){
+  for(int i = 0; i < 20; i++)
+    for(int j = 0; j < 10; j++)
+      nmino[i][j] = 0;
 }
