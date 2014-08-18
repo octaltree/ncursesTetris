@@ -104,20 +104,24 @@ int tetris::gameframe(){
 int tetris::inputkey(char in, mino block){
   switch(in){
     case (int)'h': 
-      if( enabletomove(block) )
-        block.center.x--;
+      block.center.x--;
+      if( !enabletomove(block) )
+        block.center.x++;
     break;
     case (int)'j': 
-      if( enabletomove(block) )
-        block.center.y++; 
+      block.center.y++; 
+      if( !enabletomove(block) )
+        block.center.y--; 
     break;
     case (int)'l': 
-      if( enabletomove(block) )
-        block.center.x++; 
+      block.center.x++;
+      if( !enabletomove(block) )
+        block.center.x--; 
     break;
     case (int)'k': 
-      if( enabletomove(block) )
-        block.rotate++; 
+      block.rotate++;
+      if( !enabletomove(block) )
+        block.rotate--; 
     break;
     case (int)'f':
       //落下操作
@@ -351,5 +355,23 @@ void tetris::clearnmino(){
       nmino[i][j] = 0;
 }
 
-bool enabletomove(mino block){
+bool tetris::enabletomove(mino block){
+  bool enable = true;
+  coordinate list[4];
+  block.getrestblock(list);
+  list[3].x = block.center.x;
+  list[3].y = block.center.y;
+
+  //不可能なら0をかける
+  for(int xx = 0; xx < 4; xx++){
+    if( list[xx].x > 9 ) enable *= 0;
+    if( list[xx].x < 0 ) enable *= 0;
+    if( nmino[list[xx].y][list[xx].x] != 0 ) enable *= 0;
+  }
+  for(int yy = 0; yy < 4; yy++){
+    if( list[yy].y > 19 ) enable *= 0;
+    if( nmino[list[yy].y][list[yy].x] != 0 ) enable *= 0;
+  }
+
+  return enable;
 }
