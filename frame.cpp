@@ -104,16 +104,20 @@ int tetris::gameframe(){
 int tetris::inputkey(char in, mino block){
   switch(in){
     case (int)'h': 
-      block.center.x--;
+      if( enabletomove(block) )
+        block.center.x--;
     break;
     case (int)'j': 
-      block.center.y++; 
+      if( enabletomove(block) )
+        block.center.y++; 
     break;
     case (int)'l': 
-      block.center.x++; 
+      if( enabletomove(block) )
+        block.center.x++; 
     break;
     case (int)'k': 
-      block.rotate++; 
+      if( enabletomove(block) )
+        block.rotate++; 
     break;
     case (int)'f':
       //落下操作
@@ -128,15 +132,6 @@ int tetris::inputkey(char in, mino block){
 
   return 0;
 }
-
-
-
-
-
-
-
-
-
 
 void tetris::showboard(){
   attrset(COLOR_PAIR(0));
@@ -354,4 +349,7 @@ void tetris::clearnmino(){
   for(int i = 0; i < 20; i++)
     for(int j = 0; j < 10; j++)
       nmino[i][j] = 0;
+}
+
+bool enabletomove(mino block){
 }

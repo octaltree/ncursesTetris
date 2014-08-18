@@ -19,6 +19,7 @@ class tetris{
     bool GAMEOVER();
 
     void clearnmino();
+    bool enabletomove(mino);
 
     void showboard();
 
