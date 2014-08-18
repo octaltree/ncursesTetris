@@ -1,4 +1,5 @@
 #include"frame.h"
+#include<queue>
 #include<ncurses.h>
 #include<string>
 #include<random>
@@ -53,10 +54,10 @@ int tetris::gameframe(){
   erase();
   timeout(10);//10ミリ秒
 
+  std::queue<mino> list;
   unsigned long long int frame = 0;
   int in;
   bool nino = false;
-  mino block;
 
   while(1){
     system_clock::time_point begin = system_clock::now();
@@ -68,13 +69,13 @@ int tetris::gameframe(){
 
     //ゲーム処理のメイン////////////////////
     if( !nino){ 
-      block.center.x = 0;
-      block.center.y = 0;
-      block.rotate = 0;
-      block.type = getrandomtype();
+      list.front().center.x = 0;
+      list.front().center.y = 0;
+      list.front().rotate = 0;
+      list.front().type = getrandomtype();
     }//初期化
 
-    inputkey(in, block);
+    inputkey(in, list.front());
 
     int dl = deleteline();
     if( dl > 0 && judgeclear()) return 1;
@@ -101,7 +102,7 @@ int tetris::gameframe(){
   }
 }
 
-int tetris::inputkey(char in, mino block){
+int tetris::inputkey(char in, mino& block){
   switch(in){
     case (int)'h': 
       block.center.x--;
@@ -120,8 +121,16 @@ int tetris::inputkey(char in, mino block){
     break;
     case (int)'k': 
       block.rotate++;
-      if( !enabletomove(block) )
-        block.rotate--; 
+      if( !enabletomove(block) ){
+        block.center.x++;//インクリ方向で試して
+        if( !enabletomove(block) ){
+          block.center.x -= 2;//だめならデクリ方向で試す
+          if( !enabletomove(block) ){
+            block.center.x++;//だめなら諦める
+            block.rotate--;
+          }
+        }
+      }
     break;
     case (int)'f':
       //落下操作
@@ -362,16 +371,15 @@ bool tetris::enabletomove(mino block){
   list[3].x = block.center.x;
   list[3].y = block.center.y;
 
-  //不可能なら0をかける
-  for(int xx = 0; xx < 4; xx++){
-    if( list[xx].x > 9 ) enable *= 0;
-    if( list[xx].x < 0 ) enable *= 0;
-    if( nmino[list[xx].y][list[xx].x] != 0 ) enable *= 0;
-  }
-  for(int yy = 0; yy < 4; yy++){
-    if( list[yy].y > 19 ) enable *= 0;
-    if( nmino[list[yy].y][list[yy].x] != 0 ) enable *= 0;
+  for(int i = 0; i < 4; i++){
+    if( list[i].x > 9 ) enable *= 0;
+    if( list[i].x < 0 ) enable *= 0;
+    if( nmino[list[i].y][list[i].x] != 0 ) enable *= 0;
+
+    if( list[i].y > 19 ) enable *= 0;
+    if( nmino[list[i].y][list[i].x] != 0 ) enable *= 0;
   }
 
   return enable;
 }
+

@@ -5,12 +5,13 @@
 
 class tetris{
   private:
+    mino stock;
     int nmino[20][10];
 
     void start();
     int instruct();
     int gameframe();// -1:強制終了, 0:ゲームクリア, 1:ゲームオーバー
-      int inputkey(char, mino);
+      int inputkey(char, mino&);
       //int game();
       int deleteline();//消した本数を返す
       bool judgeclear();
