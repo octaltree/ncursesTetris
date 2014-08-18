@@ -129,6 +129,15 @@ int tetris::inputkey(char in, mino block){
   return 0;
 }
 
+
+
+
+
+
+
+
+
+
 void tetris::showboard(){
   attrset(COLOR_PAIR(0));
   for(int i = 10; i < 30; i++){
