@@ -96,6 +96,11 @@ int tetris::gameframe(){
     //ここまで終了条件とmino固定条件を見た
     inputkey(in, que);
     showboard();
+    mvaddstr(que.front().center.y, que.front().center.x, " ");
+    mino out[3];
+    que.front().getrestblock(out);
+    for(int j = 0; j < 3; j++)
+      mvaddstr(out[j].y, out[j].x, " ");
 
 
 
