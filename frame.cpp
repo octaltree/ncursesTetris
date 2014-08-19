@@ -6,6 +6,7 @@
 #include<chrono>
 
 using namespace std::chrono;
+using namespace std;
 
 void tetris::Main(){
   bool end = 0;
@@ -54,10 +55,11 @@ int tetris::gameframe(){
   erase();
   timeout(10);//10ミリ秒
 
-  std::queue<mino> list;
+  queue<mino> que;
   unsigned long long int frame = 0;
-  int in;
-  bool nino = false;
+  int in, frameperfall = 100;
+  bool nino = false;//固定フラグ
+  for(int i = 0; i < 4; i++) quepush(que);
 
   while(1){
     system_clock::time_point begin = system_clock::now();
@@ -66,24 +68,41 @@ int tetris::gameframe(){
     in = getch();//timeoutした場合-1を返す
     if( in == (int)'q' || in == 27 ) return -1;
     //                 || ESCが押されたとき
-
     //ゲーム処理のメイン////////////////////
-    if( !nino){ 
-      list.front().center.x = 0;
-      list.front().center.y = 0;
-      list.front().rotate = 0;
-      list.front().type = getrandomtype();
-    }//初期化
-
-    inputkey(in, list.front());
-
     int dl = deleteline();
-    if( dl > 0 && judgeclear()) return 1;
+    if( dl > 0 && judgeclear()) return 0;//clear
+    if( frame % frameperfall == 0 ){
+      que.front().center.y++;
+      if( !enabletomove ){
+        nino = true;
+        que.front().center.y--;
+      }
+    }
+    if( nino == true && frame % frameperfall == frameperfall - 1 ){
+      nino = false;
+      que.front().center.y++;
+      if( que.front().center.y == 1 && que.front().center.x == 4 ) return 1;
+      //nminoに固定する作業
+      que.front().center.y--;
+      nmino[que.front().center.y][que.front().center.x] = que.front().type;
+      mino rest[3];
+      que.front().getrestblock(rest);
+      for(int i = 0; i < 3; i++){
+        nmino[rest[i].y][rest[i].x] = que.front().type;
+      }
+      que.pop();
+      quepush(que);
+    }
+    //ここまで終了条件とmino固定条件を見た
+    inputkey(in, que);
+    showboard();
+
+
 
     //ゲーム処理のメイン////////////////////
-    //初期化して
-    //動かして
-    //終了条件照らしあわせて
+    //終了条件見て
+    //キー読んで
+    //処理して
     //描画する
 
     mvprintw(0, 1, "frame : %d", ++frame);
@@ -102,32 +121,39 @@ int tetris::gameframe(){
   }
 }
 
-int tetris::inputkey(char in, mino& block){
+void tetris::quepush(std::queue<mino>& que){
+  mino tmp;
+  tmp.center.x = 4; tmp.center.y = 0;
+  tmp.rotate = 0; tmp.type = getrandomtype();
+  que.push(tmp);
+}
+
+int tetris::inputkey(char in, queue<mino>& que){
   switch(in){
     case (int)'h': 
-      block.center.x--;
-      if( !enabletomove(block) )
-        block.center.x++;
+      que.front().center.x--;
+      if( !enabletomove(que.front()) )
+        que.front().center.x++;
     break;
     case (int)'j': 
-      block.center.y++; 
-      if( !enabletomove(block) )
-        block.center.y--; 
+      que.front().center.y++; 
+      if( !enabletomove(que.front()) )
+        que.front().center.y--; 
     break;
     case (int)'l': 
-      block.center.x++;
-      if( !enabletomove(block) )
-        block.center.x--; 
+      que.front().center.x++;
+      if( !enabletomove(que.front()) )
+        que.front().center.x--; 
     break;
     case (int)'k': 
-      block.rotate++;
-      if( !enabletomove(block) ){
-        block.center.x++;//インクリ方向で試して
-        if( !enabletomove(block) ){
-          block.center.x -= 2;//だめならデクリ方向で試す
-          if( !enabletomove(block) ){
-            block.center.x++;//だめなら諦める
-            block.rotate--;
+      que.front().rotate++;
+      if( !enabletomove(que.front()) ){
+        que.front().center.x++;//インクリ方向で試して
+        if( !enabletomove(que.front()) ){
+          que.front().center.x -= 2;//だめならデクリ方向で試す
+          if( !enabletomove(que.front()) ){
+            que.front().center.x++;//だめなら諦める
+            que.front().rotate--;
           }
         }
       }
@@ -352,9 +378,9 @@ bool tetris::judgeclear(){
 }
 
 int tetris::getrandomtype(){
-  std::random_device rd;
-  std::mt19937 mt(rd());
-  std::uniform_int_distribution<int> minotype(1, 7);
+  random_device rd;
+  mt19937 mt(rd());
+  uniform_int_distribution<int> minotype(1, 7);
   return minotype(mt);
 }
 

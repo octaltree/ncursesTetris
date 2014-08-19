@@ -11,18 +11,20 @@ class tetris{
     void start();
     int instruct();
     int gameframe();// -1:強制終了, 0:ゲームクリア, 1:ゲームオーバー
-      int inputkey(char, mino&);
+      int inputkey(char, queue<mino>&);
       //int game();
       int deleteline();//消した本数を返す
       bool judgeclear();
       int getrandomtype();
+      void clearnmino();
+      bool enabletomove(mino);
+      void showboard();
+      void quepush(queue<mino>&);
+      //void stock(queue<mino>&);
+      //void release(queue<mino>&);
     bool CLEAR();
     bool GAMEOVER();
 
-    void clearnmino();
-    bool enabletomove(mino);
-
-    void showboard();
 
 
   public:
