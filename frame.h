@@ -11,7 +11,7 @@ class tetris{
     void start();
     int instruct();
     int gameframe();// -1:強制終了, 0:ゲームクリア, 1:ゲームオーバー
-      int inputkey(char, queue<mino>&);
+      int inputkey(char, std::queue<mino>&);
       //int game();
       int deleteline();//消した本数を返す
       bool judgeclear();
@@ -19,9 +19,9 @@ class tetris{
       void clearnmino();
       bool enabletomove(mino);
       void showboard();
-      void quepush(queue<mino>&);
-      //void stock(queue<mino>&);
-      //void release(queue<mino>&);
+      void quepush(std::queue<mino>&);
+      //void stock(std::queue<mino>&);
+      //void release(std::queue<mino>&);
     bool CLEAR();
     bool GAMEOVER();
 
