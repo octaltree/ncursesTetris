@@ -30,6 +30,7 @@ class tetris{
       void release(std::queue<mino>&);
       void fall(std::queue<mino>&);
       bool fall_enable(std::queue<mino>&);
+      void showstocked();
     bool CLEAR();
     bool GAMEOVER();
 

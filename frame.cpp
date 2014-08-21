@@ -108,6 +108,7 @@ int tetris::gameframe(){
     for(int j = 0; j < 3; j++)
       mvaddstr(out[j].y + 10, out[j].x + 6, " ");
     showque(que);
+    showstocked();
     //ここまで描画
 
 
@@ -201,6 +202,8 @@ int tetris::inputkey(char in, std::queue<mino>& que){
     break;
     case 32:
       //spaceが押された時ホールド/リリース
+      if( !stocked.type ) stock(que);
+      else release(que);
     break;
     defalt: 
 
@@ -359,6 +362,7 @@ int tetris::instruct(){
   mvaddstr(12, 0, "   l  :ブロックを右に移動");
   mvaddstr(15, 0, "   j  :ブロックを下に移動");
   mvaddstr(18, 0, "Space :ブロックをストック/リリース");
+  mvaddstr(19, 0, "(挙動が普通でないのは仕様です)");
   mvaddstr(21, 0, "   f  :ブロックを落下");
   mvaddstr(24, 0, "q/Esc :ゲームを終了");
   mvaddstr(35, 1, "--- put any key ---");
@@ -448,9 +452,18 @@ bool tetris::enabletomove(mino block){
 }
 
 void tetris::stock(std::queue<mino>& que){
+  stocked = que.front();
+  que.pop();
+  quepush(que);
 }
 
 void tetris::release(std::queue<mino>& que){
+  mino tmpfront = que.front();
+  stocked.center.x = tmpfront.center.x;
+  stocked.center.y = tmpfront.center.y;
+  stocked.rotate = 0;
+  que.front() = stocked;
+  stocked.type = 0;
 }
 
 void tetris::fall(std::queue<mino>& que){
@@ -472,4 +485,25 @@ bool tetris::fall_enable(std::queue<mino>& que){
   if( nmino[que.front().center.y][que.front().center.x] )
     Return *= 0;
   return Return;
+}
+
+void tetris::showstocked(){
+  attrset(COLOR_PAIR(0));
+  mvaddstr(1, 3, "stocked");
+  for(int i = 2; i < 8; i++){
+    for(int j = 0; j < 7; j++){
+      mvaddstr(i, j, " ");
+    }
+  }
+  if( stocked.type ){
+    stocked.center.y = 4;
+    stocked.center.x = 5;
+    stocked.rotate = 0;
+    coordinate out[3];
+    stocked.getrestblock(out);
+    attrset(COLOR_PAIR(stocked.type*10+stocked.type));
+    mvaddstr(stocked.center.y, stocked.center.x, " ");
+    for(int l = 0; l < 3; l++)
+      mvaddstr(out[l].y, out[l].x, " ");
+  }
 }
