@@ -95,11 +95,12 @@ int tetris::gameframe(){
     inputkey(in, que);
     
     showboard();
-    mvaddstr(que.front().center.y, que.front().center.x, " ");
+    attrset(COLOR_PAIR(que.front().type*10+que.front().type));
+    mvaddstr(que.front().center.y + 10, que.front().center.x + 6, " ");
     coordinate out[3];
     que.front().getrestblock(out);
     for(int j = 0; j < 3; j++)
-      mvaddstr(out[j].y, out[j].x, " ");
+      mvaddstr(out[j].y + 10, out[j].x + 6, " ");
     //ここまで描画
 
 
