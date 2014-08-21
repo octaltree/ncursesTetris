@@ -10,7 +10,7 @@
 
 class tetris{
   private:
-    mino stock;
+    mino stocked;
     int nmino[20][10];
 
     void start();
@@ -26,9 +26,12 @@ class tetris{
       void showboard();
       void quepush(std::queue<mino>&);
       void showque(std::queue<mino>);
+      void stock(std::queue<mino>&);
+      void release(std::queue<mino>&);
+      void fall(std::queue<mino>&);
+      bool fall_enable(std::queue<mino>&);
     bool CLEAR();
     bool GAMEOVER();
-
 
   public:
     void Main();

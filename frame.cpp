@@ -1,6 +1,4 @@
-
 #include"frame.h"
-
 
 using namespace std::chrono;
 
@@ -43,7 +41,7 @@ void tetris::Main(){
 
 int tetris::gameframe(){
   clearnmino();
-  stock.type = 0;
+  stocked.type = 0;
   erase();
   timeout(10);//10ミリ秒
 
@@ -61,6 +59,9 @@ int tetris::gameframe(){
     if( in == (int)'q' || in == 27 ) return -1;
     //                 || ESCが押されたとき
     //ゲーム処理のメイン////////////////////
+    inputkey(in, que);
+    //キー入力
+
     int dl = deleteline();
     if( dl > 0 && judgeclear()) return 1;//clear
     if( frame % frameperfall == 0 ){
@@ -71,11 +72,9 @@ int tetris::gameframe(){
       }
     }
     if( nino ){
-      if(  frame % frameperfall != frameperfall -1 ){
-        que.front().center.y++;
-        if( enabletomove(que.front()) ) nino = false;
-        que.front().center.y--;
-      }
+      que.front().center.y++;
+      if( enabletomove(que.front()) ) nino = false;
+      que.front().center.y--;
     }
     if( nino == true && frame % frameperfall == frameperfall - 1 ){
       nino = false;
@@ -94,7 +93,6 @@ int tetris::gameframe(){
     }
     //ここまで終了条件とmino固定条件を見た
 
-    inputkey(in, que);
     
     //色が残るので消す
     attrset(COLOR_PAIR(0));
@@ -115,8 +113,8 @@ int tetris::gameframe(){
 
 
     //ゲーム処理のメイン////////////////////
-    //終了条件見て
     //キー読んで
+    //終了条件見て
     //処理して
     //描画する
 
@@ -137,7 +135,6 @@ int tetris::gameframe(){
   }
 }
 
-
 void tetris::quepush(std::queue<mino>& que){
   mino fourth;
   fourth.center.x = 4; fourth.center.y = 0;
@@ -146,26 +143,6 @@ void tetris::quepush(std::queue<mino>& que){
 }
 
 void tetris::showque(std::queue<mino> que){
-  /*
-  mino first = que.front();
-  que.pop();
-  mino second = que.front();
-  que.pop();
-  mino third = que.front();
-  que.pop();
-  que.push(first);
-  que.push(second);
-  que.push(third);
-
-
-  attrset(COLOR_PAIR(first.type*10+first.type));
-  mvaddstr(first.center.y + 13, first.center.x + 19, " ");
-  attrset(COLOR_PAIR(second.type*10+second.type));
-  mvaddstr(second.center.y + 18, second.center.x + 19, " ");
-  attrset(COLOR_PAIR(third.type*10+third.type));
-  mvaddstr(third.center.y + 23, third.center.x + 19, " ");
-  */
-
   mino minoarr[4];
   for(int i = 0; i < 4; i++){
     minoarr[i] = que.front();
@@ -220,6 +197,7 @@ int tetris::inputkey(char in, std::queue<mino>& que){
     break;
     case (int)'f':
       //落下操作
+      fall(que);
     break;
     case 32:
       //spaceが押された時ホールド/リリース
@@ -469,3 +447,29 @@ bool tetris::enabletomove(mino block){
   return enable;
 }
 
+void tetris::stock(std::queue<mino>& que){
+}
+
+void tetris::release(std::queue<mino>& que){
+}
+
+void tetris::fall(std::queue<mino>& que){
+  int count = 0;
+  for( ; fall_enable(que); que.front().center.y++, count++);
+  if( count > 0 ) que.front().center.y--;
+}
+
+bool tetris::fall_enable(std::queue<mino>& que){
+  coordinate out[3];
+  que.front().getrestblock(out);
+  bool Return = true;
+
+  for(int i = 0; i < 3; i++){
+    if( out[i].y == 20 ) Return *= 0;
+    if( nmino[out[i].y][out[i].x] )
+      Return *= 0;
+  }
+  if( nmino[que.front().center.y][que.front().center.x] )
+    Return *= 0;
+  return Return;
+}
