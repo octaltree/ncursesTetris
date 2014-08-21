@@ -70,7 +70,7 @@ int tetris::gameframe(){
     if( dl > 0 && judgeclear()) return 0;//clear
     if( frame % frameperfall == 0 ){
       que.front().center.y++;
-      if( !enabletomove ){
+      if( !enabletomove(que.front()) ){
         nino = true;
         que.front().center.y--;
       }
@@ -82,7 +82,7 @@ int tetris::gameframe(){
       //nminoに固定する作業
       que.front().center.y--;
       nmino[que.front().center.y][que.front().center.x] = que.front().type;
-      mino rest[3];
+      coordinate rest[3];
       que.front().getrestblock(rest);
       for(int i = 0; i < 3; i++){
         nmino[rest[i].y][rest[i].x] = que.front().type;
@@ -94,7 +94,7 @@ int tetris::gameframe(){
     inputkey(in, que);
     showboard();
     mvaddstr(que.front().center.y, que.front().center.x, " ");
-    mino out[3];
+    coordinate out[3];
     que.front().getrestblock(out);
     for(int j = 0; j < 3; j++)
       mvaddstr(out[j].y, out[j].x, " ");
