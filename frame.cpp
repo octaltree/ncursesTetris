@@ -1,9 +1,6 @@
+
 #include"frame.h"
-#include<queue>
-#include<ncurses.h>
-#include<string>
-#include<random>
-#include<chrono>
+
 
 using namespace std::chrono;
 using namespace std;

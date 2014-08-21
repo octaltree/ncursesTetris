@@ -1,7 +1,12 @@
 //描画とあたり判定などゲームの制御
 
-#include"mino.h"
 #pragma once
+#include<queue>
+#include<ncurses.h>
+#include<string>
+#include<random>
+#include<chrono>
+#include"mino.h"
 
 class tetris{
   private:
