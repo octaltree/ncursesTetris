@@ -15,7 +15,7 @@ class tetris{
 
     void start();
     int instruct();
-    int gameframe();// -1:強制終了, 0:ゲームクリア, 1:ゲームオーバー
+    int gameframe();// -1:強制終了, 1:ゲームクリア, 0:ゲームオーバー
       int inputkey(char, std::queue<mino>&);
       //int game();
       int deleteline();//消した本数を返す

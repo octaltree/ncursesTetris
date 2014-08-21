@@ -31,11 +31,6 @@ void tetris::Main(){
   if( flag == -1 ) end = true;
 
 
-  //debug
-  flag = 0;
-  //debug
-
-
   if( flag == 1 )
     replay = CLEAR();
   else if( flag == 0 )
@@ -54,7 +49,7 @@ int tetris::gameframe(){
 
   std::queue<mino> que;
   unsigned long long int frame = 0;
-  int in, frameperfall = 100;
+  int in, frameperfall = 10;
   bool nino = false;//固定フラグ
   for(int i = 0; i < 4; i++) quepush(que);
 
@@ -67,7 +62,7 @@ int tetris::gameframe(){
     //                 || ESCが押されたとき
     //ゲーム処理のメイン////////////////////
     int dl = deleteline();
-    if( dl > 0 && judgeclear()) return 0;//clear
+    if( dl > 0 && judgeclear()) return 1;//clear
     if( frame % frameperfall == 0 ){
       que.front().center.y++;
       if( !enabletomove(que.front()) ){
@@ -75,10 +70,17 @@ int tetris::gameframe(){
         que.front().center.y--;
       }
     }
+    if( nino ){
+      if(  frame % frameperfall != frameperfall -1 ){
+        que.front().center.y++;
+        if( enabletomove(que.front()) ) nino = false;
+        que.front().center.y--;
+      }
+    }
     if( nino == true && frame % frameperfall == frameperfall - 1 ){
       nino = false;
       que.front().center.y++;
-      if( que.front().center.y == 1 && que.front().center.x == 4 ) return 1;
+      if( que.front().center.y == 1 && que.front().center.x == 4 ) return 0;
       //nminoに固定する作業
       que.front().center.y--;
       nmino[que.front().center.y][que.front().center.x] = que.front().type;
@@ -93,6 +95,12 @@ int tetris::gameframe(){
     //ここまで終了条件とmino固定条件を見た
 
     inputkey(in, que);
+    
+    //色が残るので消す
+    attrset(COLOR_PAIR(0));
+    for(int i = 5; i < 16; i++)
+      mvaddstr(9, i, " ");
+    //色が残るので消す
     
     showboard();
     attrset(COLOR_PAIR(que.front().type*10+que.front().type));
@@ -111,6 +119,7 @@ int tetris::gameframe(){
     //処理して
     //描画する
 
+    attrset(COLOR_PAIR(0));
     mvprintw(0, 1, "frame : %d", ++frame);
     move(0, 0);
     refresh();
