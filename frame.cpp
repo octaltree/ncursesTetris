@@ -3,7 +3,6 @@
 
 
 using namespace std::chrono;
-using namespace std;
 
 void tetris::Main(){
   bool end = 0;
@@ -49,10 +48,11 @@ void tetris::Main(){
 
 int tetris::gameframe(){
   clearnmino();
+  stock.type = 0;
   erase();
   timeout(10);//10ミリ秒
 
-  queue<mino> que;
+  std::queue<mino> que;
   unsigned long long int frame = 0;
   int in, frameperfall = 100;
   bool nino = false;//固定フラグ
@@ -91,13 +91,16 @@ int tetris::gameframe(){
       quepush(que);
     }
     //ここまで終了条件とmino固定条件を見た
+
     inputkey(in, que);
+    
     showboard();
     mvaddstr(que.front().center.y, que.front().center.x, " ");
     coordinate out[3];
     que.front().getrestblock(out);
     for(int j = 0; j < 3; j++)
       mvaddstr(out[j].y, out[j].x, " ");
+    //ここまで描画
 
 
 
@@ -123,6 +126,7 @@ int tetris::gameframe(){
   }
 }
 
+
 void tetris::quepush(std::queue<mino>& que){
   mino tmp;
   tmp.center.x = 4; tmp.center.y = 0;
@@ -130,7 +134,7 @@ void tetris::quepush(std::queue<mino>& que){
   que.push(tmp);
 }
 
-int tetris::inputkey(char in, queue<mino>& que){
+int tetris::inputkey(char in, std::queue<mino>& que){
   switch(in){
     case (int)'h': 
       que.front().center.x--;
@@ -380,9 +384,9 @@ bool tetris::judgeclear(){
 }
 
 int tetris::getrandomtype(){
-  random_device rd;
-  mt19937 mt(rd());
-  uniform_int_distribution<int> minotype(1, 7);
+  std::random_device rd;
+  std::mt19937 mt(rd());
+  std::uniform_int_distribution<int> minotype(1, 7);
   return minotype(mt);
 }
 
