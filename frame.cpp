@@ -109,6 +109,7 @@ int tetris::gameframe(){
     que.front().getrestblock(out);
     for(int j = 0; j < 3; j++)
       mvaddstr(out[j].y + 10, out[j].x + 6, " ");
+    showque(que);
     //ここまで描画
 
 
@@ -138,10 +139,53 @@ int tetris::gameframe(){
 
 
 void tetris::quepush(std::queue<mino>& que){
-  mino tmp;
-  tmp.center.x = 4; tmp.center.y = 0;
-  tmp.rotate = 0; tmp.type = getrandomtype();
-  que.push(tmp);
+  mino fourth;
+  fourth.center.x = 4; fourth.center.y = 0;
+  fourth.rotate = 0; fourth.type = getrandomtype();
+  que.push(fourth);
+}
+
+void tetris::showque(std::queue<mino> que){
+  /*
+  mino first = que.front();
+  que.pop();
+  mino second = que.front();
+  que.pop();
+  mino third = que.front();
+  que.pop();
+  que.push(first);
+  que.push(second);
+  que.push(third);
+
+
+  attrset(COLOR_PAIR(first.type*10+first.type));
+  mvaddstr(first.center.y + 13, first.center.x + 19, " ");
+  attrset(COLOR_PAIR(second.type*10+second.type));
+  mvaddstr(second.center.y + 18, second.center.x + 19, " ");
+  attrset(COLOR_PAIR(third.type*10+third.type));
+  mvaddstr(third.center.y + 23, third.center.x + 19, " ");
+  */
+
+  mino minoarr[4];
+  for(int i = 0; i < 4; i++){
+    minoarr[i] = que.front();
+    que.pop();
+  }//準備
+  attrset(COLOR_PAIR(0));
+  for(int i = 10; i < 30; i++){
+    for(int j = 17; j < 25; j++){
+      mvaddstr(i, j, " ");
+    }
+  }//掃除
+  for(int j = 1; j < 4; j++){
+    int type = minoarr[j].type;
+    coordinate out[3];
+    minoarr[j].getrestblock(out);
+    attrset(COLOR_PAIR(type*10+type));
+    mvaddstr(minoarr[j].center.y + 8 + 5*j, minoarr[j].center.x + 19, " ");
+    for(int k = 0; k < 3; k++)
+      mvaddstr(out[k].y + 8 + 5 * j, out[k].x + 19, " ");
+  }
 }
 
 int tetris::inputkey(char in, std::queue<mino>& que){

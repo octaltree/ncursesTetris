@@ -25,6 +25,7 @@ class tetris{
       bool enabletomove(mino);
       void showboard();
       void quepush(std::queue<mino>&);
+      void showque(std::queue<mino>);
     bool CLEAR();
     bool GAMEOVER();
 
