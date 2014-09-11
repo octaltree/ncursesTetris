@@ -1,4 +1,0 @@
-#!/bin/sh
-
-g++ -lncursesw -std=c++11 a.cpp frame.cpp mino.cpp 2> error
-
