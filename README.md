@@ -1,4 +1,4 @@
-とりま complete ver1.0
+ncursesでtetrisっぽいなにか
 
 ストック関連にバグあり
 方向キーにvimバインド
